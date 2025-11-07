@@ -8,9 +8,19 @@ packages = [{ include = "hal_simplicity" }]
 [tool.poetry.dependencies]
 python = "^3.10"
 maturin = "^1.7"  
+poethepoet = "^0.37.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.0"
+
+
+[tool.poe.tasks.build-wheel]
+shell = """
+cargo build &&
+maturin build --manifest-path hal_simplicity_py/Cargo.toml &&
+poetry run pip install --force-reinstall "$(ls -t target/wheels/hal_simplicity_py*.whl | head -n 1)"
+"""
+
 
 [build-system]
 requires = ["maturin>=1.7,<2.0"]
