@@ -115,7 +115,7 @@ fn run_cli_command(cmdline: &str) -> PyResult<String> {
 
 		// log::info!("Parsed args: {:?}", args);
 		if args.iter().any(|a| a == "-V" || a == "--version") {
-			return Ok("Command executed successfully".to_string());
+		    return Ok(clap::crate_version!().to_string());  // return actual version
 		}
 
 		let app = init_app();
