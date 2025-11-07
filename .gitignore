@@ -1,1 +1,6 @@
-target/
+/target
+/.github
+/.venv
+.rustfmt.toml
+Cargo.lock
+poetry.lock

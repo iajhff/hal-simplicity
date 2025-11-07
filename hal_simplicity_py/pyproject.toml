@@ -1,0 +1,10 @@
+[project]
+name = "hal_simplicity_py"
+version = "0.1.0"
+description = "Rust extension module for hal-simplicity"
+authors = [{ name = "anonym", email = "anonym@example.com" }]
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+

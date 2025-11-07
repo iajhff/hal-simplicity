@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "hal-simplicity"
+version = "0.1.0"
+description = "Python bindings and CLI for hal-simplicity via PyO3"
+authors = ["anonym <anonym@example.com>"]
+packages = [{ include = "hal_simplicity" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+maturin = "^1.7"  
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.0"
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"

@@ -1,0 +1,30 @@
+[package]
+name = "hal_simplicity_py"
+version = "0.1.0"
+edition = "2024"
+
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+# Core dependency
+hal = "0.10.0"
+
+# Command-line interface (Clap 2.x)
+clap = "2.32"
+
+# Logging
+log = "0.4"
+fern = "0.6"
+
+# String splitting for CLI parsing
+shell-words = "1.1"
+
+# PyO3 for Python bindings
+pyo3 = { version = "0.25", features = ["extension-module"] }
+
+# Elements + Simplicity core
+elements = "0.24"
+hal_simplicity = { path = "../hal_simplicity" }
