@@ -14,12 +14,12 @@ pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 		.subcommand(cmd_decode())
 }
 
-pub fn execute<'a>(matches: &clap::ArgMatches<'a>) {
+pub fn execute<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	match matches.subcommand() {
 		("create", Some(m)) => exec_create(m),
 		("decode", Some(m)) => exec_decode(m),
 		(_, _) => unreachable!("clap prints help"),
-	};
+	}
 }
 
 fn cmd_create<'a>() -> clap::App<'a, 'a> {
@@ -90,7 +90,7 @@ fn create_block_header(info: BlockHeaderInfo) -> BlockHeader {
 	}
 }
 
-fn exec_create<'a>(matches: &clap::ArgMatches<'a>) {
+fn exec_create<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	let info = serde_json::from_str::<BlockInfo>(&cmd::arg_or_stdin(matches, "block-info"))
 		.expect("invaid json JSON input");
 
@@ -113,9 +113,11 @@ fn exec_create<'a>(matches: &clap::ArgMatches<'a>) {
 
 	let block_bytes = serialize(&block);
 	if matches.is_present("raw-stdout") {
-		::std::io::stdout().write_all(&block_bytes).unwrap();
+		::std::io::stdout().write_all(&block_bytes)
+			.map_err(|e| crate::cmd::CmdError::IoError(e.to_string()))?;
+		Ok(String::new())
 	} else {
-		print!("{}", hex::encode(&block_bytes));
+		Ok(hex::encode(&block_bytes))
 	}
 }
 
@@ -127,7 +129,7 @@ fn cmd_decode<'a>() -> clap::App<'a, 'a> {
 	])
 }
 
-fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) {
+fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	let hex_tx = cmd::arg_or_stdin(matches, "raw-block");
 	let raw_tx = hex::decode(hex_tx.as_ref()).expect("could not decode raw block hex");
 
@@ -139,7 +141,7 @@ fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) {
 			transactions: None,
 			raw_transactions: None,
 		};
-		cmd::print_output(matches, &info)
+		cmd::serialize_output(matches, &info)
 	} else {
 		let header: BlockHeader = match deserialize(&raw_tx) {
 			Ok(header) => header,
@@ -149,6 +151,6 @@ fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) {
 			}
 		};
 		let info = crate::GetInfo::get_info(&header, cmd::network(matches));
-		cmd::print_output(matches, &info)
+		cmd::serialize_output(matches, &info)
 	}
 }
